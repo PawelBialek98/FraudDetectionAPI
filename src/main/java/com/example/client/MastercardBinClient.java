@@ -14,8 +14,21 @@ import org.jboss.resteasy.reactive.RestHeader;
 
 import java.util.List;
 
+/**
+ *  Represents Client API for Mastercard Bin Lookup
+ */
 @RegisterRestClient(baseUri = "https://sandbox.api.mastercard.com/bin-resources")
 public interface MastercardBinClient {
+
+    /**
+     * Call Mastercard Bin Lookup /bin-ranges/account-searches endpoint to receive Bin related data
+     *
+     * @param authHeader - OAuth1.0a authorization header
+     * @param requestId - X-REQUESTID for traceability
+     * @param accountRange - Bin number to received data for
+     * @return List of BinDetails with one BinDetail object
+     * @throws MastercardBinLookupException - if Mastercard Api returns error 400 or above
+     */
     @POST
     @Path("/bin-ranges/account-searches")
     @CacheResult(cacheName = "mastercard-bin-cache")
@@ -23,6 +36,13 @@ public interface MastercardBinClient {
                                    @RestHeader("X-REQUESTID") String requestId,
                                    String accountRange) throws MastercardBinLookupException;
 
+    /**
+     * Handler for errors with codes 400+
+     *
+     * @param response from MastercardApi
+     * @return handled exception
+     * @throws JsonProcessingException if MastercardApi throws not standardized error
+     */
     @ClientExceptionMapper
     static RuntimeException toException(Response response) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();

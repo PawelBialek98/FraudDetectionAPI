@@ -25,9 +25,9 @@ public class HighRiskCountryRisk implements RiskRule {
     @Override
     public RiskAssessment evaluate(TransactionAPI transaction, BinDetails binDetails) {
         if (HIGH_RISK_COUNTRIES.contains(transaction.getUserLocation())) {
-            return new RiskAssessment(40, "Transaction from a high-risk country");
+            return new RiskAssessment(40, "Transaction from a high-risk country: " + transaction.getUserLocation());
         } else if (MODERATE_RISK_COUNTRIES.contains(transaction.getUserLocation())) {
-            return new RiskAssessment(20, "Transaction from a moderate risk country");
+            return new RiskAssessment(20, "Transaction from a moderate risk country: "+ transaction.getUserLocation());
         }
         return new RiskAssessment(0, "Country is safe");
     }

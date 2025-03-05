@@ -23,8 +23,7 @@ public class RiskAssessmentService {
     TransactionRepository transactionRepository;
 
     public RiskResult assessRisk(TransactionAPI transaction, String requestId) {
-        BinDetails binDetails = mastercardBinService.getBinDetails(transaction.getBinNumber(), requestId)
-                .orElseThrow(NotFoundException::new);
+        BinDetails binDetails = mastercardBinService.getBinDetails(transaction.getBinNumber(), requestId);
 
         RiskResult riskResult = riskEvaluator.evaluateRisk(transaction, binDetails);
         saveRiskAssessment(transaction, riskResult, requestId);

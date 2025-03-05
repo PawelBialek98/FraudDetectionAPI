@@ -2,12 +2,10 @@ package com.example.resource;
 
 import com.example.exception.MastercardBinLookupException;
 import com.example.exception.SigningKeyException;
-import com.example.model.mastercardApi.BinDetails;
 import com.example.model.api.SimpleBinAPI;
 import com.example.model.api.TransactionAPI;
 import com.example.service.MastercardBinService;
 import com.example.service.RiskAssessmentService;
-import com.example.model.risk.RiskResult;
 import io.quarkus.logging.Log;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -21,14 +19,14 @@ import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
-import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static com.example.utils.Constants.REQUEST_ID_HEADER;
 
 @Path("")
 @RequestScoped
-public class TransactionResource {
+public class FraudDetectionResource {
 
     @Inject
     JsonWebToken jwt;
@@ -45,40 +43,29 @@ public class TransactionResource {
     @Operation(summary = "Evaluate Transaction", description = "This metod evaluate transaction and returns it score")
     public Response evaluateTransaction(@Valid TransactionAPI input, @Context HttpHeaders headers) {
         String requestId = getRequestIdHeader(headers);
-        RiskResult riskResult;
-        try{
-            riskResult = riskAssessmentService.assessRisk(input, requestId);
-        } catch (MastercardBinLookupException e){
-            Log.error(e);
-            return Response.status(Response.Status.fromStatusCode(e.getStatusCode())).entity(e.getMessage()).build();
-        } catch (SigningKeyException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }
-        return Response.ok(riskResult).build();
+        return handleExceptions(() -> riskAssessmentService.assessRisk(input, requestId));
     }
 
     @GET
     @Path("/getBinDetails")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({ "User", "Admin" })
+    @RolesAllowed({"User"})
     @Operation(summary = "Bin Details", description = "Receive Bin number details from mastercard API")
     public Response getBinDetails(@Valid @BeanParam SimpleBinAPI request, @Context HttpHeaders headers) {
         String requestId = getRequestIdHeader(headers);
-        Optional<BinDetails> binDetailsOptional;
-        try{
-            binDetailsOptional = mastercardBinService.getBinDetails(request.getBinNumber(), requestId);
-        } catch (MastercardBinLookupException e){
+        return handleExceptions(() -> mastercardBinService.getBinDetails(request.getBinNumber(), requestId));
+    }
+
+    private <T> Response handleExceptions(Supplier<T> action) {
+        try {
+            T result = action.get();
+            return Response.ok(result).build();
+        } catch (MastercardBinLookupException e) {
             Log.error(e);
             return Response.status(Response.Status.fromStatusCode(e.getStatusCode())).entity(e.getMessage()).build();
-        } catch (SigningKeyException e){
+        } catch (SigningKeyException e) {
+            Log.error(e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-        }
-
-        if (binDetailsOptional.isPresent()) {
-            return Response.ok().entity(binDetailsOptional.get()).build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Bin not found").build();
         }
     }
 

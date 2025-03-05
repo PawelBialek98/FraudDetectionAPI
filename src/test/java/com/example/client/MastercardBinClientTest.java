@@ -3,10 +3,8 @@ package com.example.client;
 import com.example.exception.MastercardBinLookupException;
 import com.example.model.mastercardApi.BinDetails;
 import com.example.service.MastercardBinService;
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 
 @QuarkusTest
 public class MastercardBinClientTest {

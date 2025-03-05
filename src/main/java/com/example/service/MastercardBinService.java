@@ -9,6 +9,7 @@ import io.quarkus.cache.CacheResult;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -22,7 +23,6 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.List;
-import java.util.Optional;
 
 @ApplicationScoped
 public class MastercardBinService {
@@ -44,13 +44,13 @@ public class MastercardBinService {
     String signingKeyPassword;
 
     @CacheResult(cacheName = "bin-cache")
-    public Optional<BinDetails> getBinDetails(String binId, String requestId) {
+    public BinDetails getBinDetails(String binId, String requestId) {
 
         String payload = "{\"accountRange\":\"" + binId + "\"}";
         String authHeader = prepareAuthHeader(payload);
 
         List<BinDetails> binDetails = mastercardBinClient.getBinDetails(authHeader, requestId, payload);
-        return binDetails.stream().findFirst();
+        return binDetails.stream().findFirst().orElseThrow(NotFoundException::new);
     }
 
     public String prepareAuthHeader(String payload){
