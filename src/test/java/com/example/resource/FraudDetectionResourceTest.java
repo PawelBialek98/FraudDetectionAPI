@@ -43,47 +43,6 @@ public class FraudDetectionResourceTest {
         authHeader = "Bearer " + GenerateToken.generateToken();
     }
 
-//    @Test
-//    void testEvaluateTransaction_Success() {
-//        TransactionAPI transaction = new TransactionAPI(); // Utwórz obiekt testowy
-//        RiskResult mockRiskResult = new RiskResult("LOW_RISK");
-//
-//        when(riskAssessmentService.assessRisk(any(TransactionAPI.class), anyString()))
-//                .thenReturn(mockRiskResult);
-//
-//        given()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .header(new Header("Authorization", "Bearer test-token"))
-//                .header(new Header("X-Request-ID", REQUEST_ID))
-//                .body(transaction)
-//                .when()
-//                .post("/evaluateTransaction")
-//                .then()
-//                .statusCode(Response.Status.OK.getStatusCode())
-//                .body("riskLevel", equalTo("LOW_RISK"));
-//
-//        verify(riskAssessmentService, times(1)).assessRisk(any(TransactionAPI.class), anyString());
-//    }
-//
-//    @Test
-//    void testEvaluateTransaction_MastercardBinLookupException() {
-//        TransactionAPI transaction = new TransactionAPI();
-//
-//        when(riskAssessmentService.assessRisk(any(TransactionAPI.class), anyString()))
-//                .thenThrow(new MastercardBinLookupException("BIN Lookup Failed", 400));
-//
-//        given()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .header(new Header("Authorization", "Bearer test-token"))
-//                .header(new Header("X-Request-ID", REQUEST_ID))
-//                .body(transaction)
-//                .when()
-//                .post("/evaluateTransaction")
-//                .then()
-//                .statusCode(400)
-//                .body(equalTo("BIN Lookup Failed"));
-//    }
-
     @Test
     void testGetBinDetails_Success() {
         String binNum = "12345678";

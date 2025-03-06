@@ -16,16 +16,13 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
-import static com.example.utils.Constants.REQUEST_ID_HEADER;
 
 @Path("")
 @RequestScoped
@@ -43,7 +40,7 @@ public class FraudDetectionResource {
     @POST
     @Path("/evaluateTransaction")
     @RolesAllowed({ "User", "Admin" })
-    @Operation(summary = "Evaluate Transaction", description = "This metod evaluate transaction and returns it score")
+    @Operation(summary = "Evaluate Transaction", description = "Evaluate transaction and returns it score with description")
     public Response evaluateTransaction(@Valid TransactionAPI input) {
         return handleExceptions(() -> riskAssessmentService.assessRisk(input));
     }

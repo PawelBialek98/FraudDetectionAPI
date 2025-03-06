@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface  ValidCountry {
-    String message() default "Invalid country code. Must be a valid ISO 639.";
+    String message() default "Invalid country code. Must be a valid ISO 639";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

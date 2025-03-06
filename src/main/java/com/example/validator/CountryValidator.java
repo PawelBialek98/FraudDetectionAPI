@@ -21,6 +21,6 @@ public class CountryValidator implements ConstraintValidator<ValidCountry, Strin
         if (value == null) {
             return false;
         }
-        return ISO_COUNTRIES.contains(value);
+        return ISO_COUNTRIES.contains(value.toUpperCase());
     }
 }

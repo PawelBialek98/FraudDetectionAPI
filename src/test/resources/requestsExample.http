@@ -1,0 +1,17 @@
+GET http://localhost:8080/getBinDetails?binNumber=99875393
+Content-Type: application/json
+Authorization: Bearer <<Your token here>>
+
+
+###
+
+POST http://localhost:8080/evaluateTransaction
+Content-Type: application/json
+Authorization: Bearer <<Your token here>>
+
+{
+    "binNumber": 99875393,
+    "amount": 10000000,
+    "currency": "USD",
+    "userLocation": "POL"
+}
