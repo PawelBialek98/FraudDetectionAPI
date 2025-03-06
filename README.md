@@ -44,5 +44,6 @@ In order to run tests run:
 ```shell script
 mvn test
 ```
+The current test coverage **is not 100%** (jacoco), but I wanted to create a general picture of the tests. Both unit tests (e.g. HighRiskCountryRiskTest) and integration tests with the mastercard API (MastercardBinClientTest)
 
 > **_NOTE:_**  Mastercard API tests integrates with remote API and therefore requires firstly provide specific parameters in application.properties file
