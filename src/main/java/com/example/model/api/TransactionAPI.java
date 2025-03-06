@@ -1,6 +1,5 @@
 package com.example.model.api;
 
-import com.example.logging.MaskedLog;
 import com.example.validator.ValidCountry;
 import com.example.validator.ValidCurrency;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +14,6 @@ public class TransactionAPI {
 
     @NotBlank(message="binNumber may not be blank")
     @Pattern(regexp = BIN_PATTERN, message = "Bin should contains only 8 digits")
-    @MaskedLog
     private String binNumber;
 
     @Positive(message = "amount cannot be negative")

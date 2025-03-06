@@ -8,7 +8,9 @@ import com.example.service.risk.RiskEvaluator;
 import com.example.model.risk.RiskResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.NotFoundException;
+import org.slf4j.MDC;
+
+import static com.example.utils.Constants.REQUEST_ID_HEADER;
 
 @ApplicationScoped
 public class RiskAssessmentService {
@@ -22,22 +24,22 @@ public class RiskAssessmentService {
     @Inject
     TransactionRepository transactionRepository;
 
-    public RiskResult assessRisk(TransactionAPI transaction, String requestId) {
-        BinDetails binDetails = mastercardBinService.getBinDetails(transaction.getBinNumber(), requestId);
+    public RiskResult assessRisk(TransactionAPI transaction) {
+        BinDetails binDetails = mastercardBinService.getBinDetails(transaction.getBinNumber());
 
         RiskResult riskResult = riskEvaluator.evaluateRisk(transaction, binDetails);
-        saveRiskAssessment(transaction, riskResult, requestId);
+        saveRiskAssessment(transaction, riskResult);
         return riskResult;
     }
 
-    private void saveRiskAssessment(TransactionAPI transactionAPI, RiskResult riskResult, String requestId) {
+    private void saveRiskAssessment(TransactionAPI transactionAPI, RiskResult riskResult) {
         Transaction transaction = new Transaction();
         transaction.setRiskResult(riskResult);
         transaction.setBinNumber(transactionAPI.getBinNumber());
         transaction.setAmount(transactionAPI.getAmount());
         transaction.setCurrency(transactionAPI.getCurrency());
         transaction.setUserLocation(transactionAPI.getUserLocation());
-        transaction.setRequestId(requestId);
+        transaction.setRequestId(MDC.get(REQUEST_ID_HEADER));
         transactionRepository.persist(transaction);
     }
 }

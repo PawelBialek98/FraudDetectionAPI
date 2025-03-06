@@ -17,7 +17,7 @@ import java.util.List;
 /**
  *  Represents Client API for Mastercard Bin Lookup
  */
-@RegisterRestClient(baseUri = "https://sandbox.api.mastercard.com/bin-resources")
+@RegisterRestClient(configKey = "mastercard-bin-client")
 public interface MastercardBinClient {
 
     /**

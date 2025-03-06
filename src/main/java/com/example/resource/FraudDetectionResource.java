@@ -11,8 +11,11 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -41,9 +44,8 @@ public class FraudDetectionResource {
     @Path("/evaluateTransaction")
     @RolesAllowed({ "User", "Admin" })
     @Operation(summary = "Evaluate Transaction", description = "This metod evaluate transaction and returns it score")
-    public Response evaluateTransaction(@Valid TransactionAPI input, @Context HttpHeaders headers) {
-        String requestId = getRequestIdHeader(headers);
-        return handleExceptions(() -> riskAssessmentService.assessRisk(input, requestId));
+    public Response evaluateTransaction(@Valid TransactionAPI input) {
+        return handleExceptions(() -> riskAssessmentService.assessRisk(input));
     }
 
     @GET
@@ -51,9 +53,8 @@ public class FraudDetectionResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"User"})
     @Operation(summary = "Bin Details", description = "Receive Bin number details from mastercard API")
-    public Response getBinDetails(@Valid @BeanParam SimpleBinAPI request, @Context HttpHeaders headers) {
-        String requestId = getRequestIdHeader(headers);
-        return handleExceptions(() -> mastercardBinService.getBinDetails(request.getBinNumber(), requestId));
+    public Response getBinDetails(@Valid @BeanParam SimpleBinAPI request) {
+        return handleExceptions(() -> mastercardBinService.getBinDetails(request.getBinNumber()));
     }
 
     private <T> Response handleExceptions(Supplier<T> action) {
@@ -67,13 +68,5 @@ public class FraudDetectionResource {
             Log.error(e);
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
-    }
-
-    private String getRequestIdHeader(HttpHeaders headers) {
-        String requestId = headers.getHeaderString(REQUEST_ID_HEADER);
-        if (requestId == null || requestId.isBlank()) {
-            requestId = UUID.randomUUID().toString();
-        }
-        return requestId;
     }
 }

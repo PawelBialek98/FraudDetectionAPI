@@ -5,8 +5,6 @@ import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 import org.jboss.logging.Logger;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @Interceptor
 @Logged
@@ -17,11 +15,9 @@ public class LoggingInterceptor {
     public Object logMethodCall(InvocationContext context) throws Exception {
         String methodName = context.getMethod().getName();
         Object[] parameters = context.getParameters();
-        Object[] maskedParameters = Arrays.stream(parameters)
-                .map(this::maskSensitiveData)
-                .toArray();
+        String maskedParams = maskSensitiveData(parameters);
 
-        LOG.infof("Calling: %s(%s)", methodName, Arrays.toString(maskedParameters));
+        LOG.infof("Calling: %s -> %s", methodName, maskedParams);
 
         Object result = context.proceed();
 
@@ -32,14 +28,18 @@ public class LoggingInterceptor {
     }
 
     private String maskSensitiveData(Object obj) {
-        if (obj == null) return "null";
-
-        if (obj instanceof String str) {
-            return str.replaceAll("\\d(?=\\d{4})", "*"); // Zamiana cyfr na '*', ale zostawienie 4 ostatnich znaków
-        }
-
-        if (obj instanceof Number) {
-            return "***"; // Zamiana liczb na ***
+        switch (obj) {
+            case null -> {
+                return "null";
+            }
+            case String str -> {
+                return str.replaceAll("\\d(?=\\d{4})", "*");
+            }
+            case Number number -> {
+                return "***";
+            }
+            default -> {
+            }
         }
 
         try {
@@ -53,7 +53,6 @@ public class LoggingInterceptor {
         } catch (Exception e) {
             LOG.warn("Błąd maskowania danych", e);
         }
-
         return obj.toString();
     }
 }

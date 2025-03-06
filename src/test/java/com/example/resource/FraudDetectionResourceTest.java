@@ -2,7 +2,6 @@ package com.example.resource;
 
 import com.example.GenerateToken;
 import com.example.exception.MastercardBinLookupException;
-import com.example.model.api.SimpleBinAPI;
 import com.example.model.mastercardApi.BinDetails;
 import com.example.service.MastercardBinService;
 import com.example.service.RiskAssessmentService;
@@ -20,11 +19,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 public class FraudDetectionResourceTest {
@@ -96,7 +93,7 @@ public class FraudDetectionResourceTest {
         mockBinDetails.setGovernmentRange(true);
         mockBinDetails.setCustomerName("VILLAGE BANK");
 
-        when(mastercardBinService.getBinDetails(anyString(), anyString()))
+        when(mastercardBinService.getBinDetails(anyString()))
                 .thenReturn(mockBinDetails);
 
         given()
@@ -112,14 +109,14 @@ public class FraudDetectionResourceTest {
                 .body("governmentRange", equalTo(true))
                 .body("customerName", equalTo("VILLAGE BANK"));
 
-        verify(mastercardBinService, times(1)).getBinDetails(eq(binNum), anyString());
+        verify(mastercardBinService, times(1)).getBinDetails(eq(binNum));
     }
 
     @Test
     void testGetBinDetails_NotFound() {
         String binNum = "00000000";
 
-        when(mastercardBinService.getBinDetails(eq(binNum), anyString()))
+        when(mastercardBinService.getBinDetails(eq(binNum)))
                 .thenThrow(new NotFoundException());
 
         given()
@@ -137,7 +134,7 @@ public class FraudDetectionResourceTest {
     void testGetBinDetails_MastercardApiError() {
         String binNum = "00000000";
 
-        when(mastercardBinService.getBinDetails(eq(binNum), anyString()))
+        when(mastercardBinService.getBinDetails(eq(binNum)))
                 .thenThrow(new MastercardBinLookupException("some_message", 401));
 
         given()

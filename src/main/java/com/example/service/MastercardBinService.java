@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,6 +24,8 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.List;
+
+import static com.example.utils.Constants.REQUEST_ID_HEADER;
 
 @ApplicationScoped
 public class MastercardBinService {
@@ -44,17 +47,18 @@ public class MastercardBinService {
     String signingKeyPassword;
 
     @CacheResult(cacheName = "bin-cache")
-    public BinDetails getBinDetails(String binId, String requestId) {
+    public BinDetails getBinDetails(String binId) {
 
         String payload = "{\"accountRange\":\"" + binId + "\"}";
         String authHeader = prepareAuthHeader(payload);
 
+        String requestId = MDC.get(REQUEST_ID_HEADER);
         List<BinDetails> binDetails = mastercardBinClient.getBinDetails(authHeader, requestId, payload);
         return binDetails.stream().findFirst().orElseThrow(NotFoundException::new);
     }
 
     public String prepareAuthHeader(String payload){
-        PrivateKey signingKey = null;
+        PrivateKey signingKey;
         try {
             signingKey = AuthenticationUtils.loadSigningKey(pkcs12KeyFilePath,
                     signingKeyAlias,
