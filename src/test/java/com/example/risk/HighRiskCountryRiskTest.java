@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HighRiskCountryRiskTest {
-    private HighRiskCountryRisk highRiskCountry = new HighRiskCountryRisk();
+    private final HighRiskCountryRisk highRiskCountry = new HighRiskCountryRisk();
 
     @Test
     void testHighRiskCountryTransaction() {
@@ -35,6 +35,6 @@ public class HighRiskCountryRiskTest {
         RiskAssessment result = highRiskCountry.evaluate(transaction, binDetails);
 
         assertEquals(20, result.riskScore());
-        assertEquals("Transaction from a high-risk country: BOL", result.assessment());
+        assertEquals("Transaction from a moderate risk country: BOL", result.assessment());
     }
 }

@@ -1,7 +1,7 @@
 package com.example.model.api;
 
-import com.example.validator.ValidCountry;
-import com.example.validator.ValidCurrency;
+import com.example.validator.country.ValidCountry;
+import com.example.validator.currency.ValidCurrency;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

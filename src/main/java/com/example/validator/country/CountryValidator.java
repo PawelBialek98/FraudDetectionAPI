@@ -1,9 +1,8 @@
-package com.example.validator;
+package com.example.validator.country;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.util.Currency;
 import java.util.Locale;
 import java.util.Set;
 
