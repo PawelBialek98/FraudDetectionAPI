@@ -6,12 +6,12 @@ At the moment applicaiton works only with *dev mode* (MongoDB works in Dev Servi
 
 - Installed Docker (to run MongoDB in Dev Services mode)
 - In order to integrate with **MasterCard BIN API**:
-    - You must set up/own a developer account
-    - Set proper parameters in _src/main/resources/application.properties_:
-        - **mastercard.api.consumerKey** - Set here you consumer Key
-        - **mastercard.api.pkcs12Key.filePath** - Path to your signing file
-        - **mastercard.api.signingKey.alias** - Signing file alias
-        - **mastercard.api.signingKey.password** - Signing file password
+  - You must set up/own a developer account
+  - Set proper parameters in _src/main/resources/application.properties_:
+    - **mastercard.api.consumerKey** - Set here you consumer Key 
+    - **mastercard.api.pkcs12Key.filePath** - Path to your signing file
+    - **mastercard.api.signingKey.alias** - Signing file alias 
+    - **mastercard.api.signingKey.password** - Signing file password
 
 ```shell script
 ./mvnw quarkus:dev
@@ -32,8 +32,7 @@ You can do it by running:<br>
 mvn exec:java -Dexec.mainClass=com.example.GenerateToken -Dexec.classpathScope=test
 ```
 
-In the result in terminal will be printed generated token - now add it to Authorization header to gain access to
-endpoints :)
+In the result in terminal will be printed generated token - now add it to Authorization header to gain access to endpoints :)
 
 Endpoints are documented on swaggerUI:
 
@@ -48,6 +47,8 @@ In order to run tests run:
 ```shell script
 mvn test
 ```
+The current test coverage **is not 100%** (jacoco), but I wanted to create a general picture of the tests. Both unit tests (e.g. HighRiskCountryRiskTest) and integration tests with the mastercard API (MastercardBinClientTest)
 
-> **_NOTE:_**  Mastercard API tests integrates with remote API and therefore requires firstly provide specific
+> **_NOTE:_**  Mastercard API tests integrates with remote API and therefore requires firstly provide specific parameters in application.properties file
+
 > parameters in application.properties file
