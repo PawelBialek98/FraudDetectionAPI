@@ -1,13 +1,13 @@
 package com.example.model.api;
 
-import java.util.Set;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,8 +24,7 @@ class SimpleBinAPIValidationTest {
 
     @Test
     void testValidBinNumber() {
-        SimpleBinAPI simpleBinAPI = new SimpleBinAPI();
-        simpleBinAPI.setBinNumber("12345678");
+        SimpleBinAPI simpleBinAPI = new SimpleBinAPI("12345678");
 
         Set<ConstraintViolation<SimpleBinAPI>> violations = validator.validate(simpleBinAPI);
         assertTrue(violations.isEmpty(), "Expected no validation errors for a valid bin number");
@@ -33,8 +32,7 @@ class SimpleBinAPIValidationTest {
 
     @Test
     void testInvalidBinNumberTooShort() {
-        SimpleBinAPI simpleBinAPI = new SimpleBinAPI();
-        simpleBinAPI.setBinNumber("12345");
+        SimpleBinAPI simpleBinAPI = new SimpleBinAPI("12345");
 
         Set<ConstraintViolation<SimpleBinAPI>> violations = validator.validate(simpleBinAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for bin length");
@@ -42,8 +40,7 @@ class SimpleBinAPIValidationTest {
 
     @Test
     void testInvalidBinNumberNonNumeric() {
-        SimpleBinAPI simpleBinAPI = new SimpleBinAPI();
-        simpleBinAPI.setBinNumber("abcdefgh");
+        SimpleBinAPI simpleBinAPI = new SimpleBinAPI("abcdefgh");
 
         Set<ConstraintViolation<SimpleBinAPI>> violations = validator.validate(simpleBinAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for non-numeric bin");
@@ -51,8 +48,7 @@ class SimpleBinAPIValidationTest {
 
     @Test
     void testInvalidBinNumberBlank() {
-        SimpleBinAPI simpleBinAPI = new SimpleBinAPI();
-        simpleBinAPI.setBinNumber("        ");
+        SimpleBinAPI simpleBinAPI = new SimpleBinAPI("        ");
 
         Set<ConstraintViolation<SimpleBinAPI>> violations = validator.validate(simpleBinAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for blank bin");
@@ -60,8 +56,7 @@ class SimpleBinAPIValidationTest {
 
     @Test
     void testInvalidBinNumberNull() {
-        SimpleBinAPI simpleBinAPI = new SimpleBinAPI();
-        simpleBinAPI.setBinNumber(null);
+        SimpleBinAPI simpleBinAPI = new SimpleBinAPI(null);
 
         Set<ConstraintViolation<SimpleBinAPI>> violations = validator.validate(simpleBinAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for null bin");

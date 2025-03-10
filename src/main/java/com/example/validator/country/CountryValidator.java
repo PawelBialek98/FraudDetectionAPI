@@ -10,16 +10,12 @@ public class CountryValidator implements ConstraintValidator<ValidCountry, Strin
 
     private static final Set<String> ISO_COUNTRIES = Locale.getISOCountries(Locale.IsoCountryCode.PART1_ALPHA3);
 
-
-    @Override
-    public void initialize(ValidCountry constraintAnnotation) {
-    }
-
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) {
+        try {
+            return ISO_COUNTRIES.contains(value.toUpperCase());
+        } catch (ClassCastException | NullPointerException e) {
             return false;
         }
-        return ISO_COUNTRIES.contains(value.toUpperCase());
     }
 }

@@ -1,44 +1,37 @@
 package com.example.model.mastercardApi;
 
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class BinDetails {
-    private String lowAccountRange;
-    private String highAccountRange;
-    private String binNum;
-    private int binLength;
-    private String acceptanceBrand;
-    private String ica;
-    private String customerName;
-    private Country country;
-    private boolean localUse;
-    private boolean authorizationOnly;
-    private String productCode;
-    private String productDescription;
-    private boolean governmentRange;
-    private boolean nonReloadableIndicator;
-    private String anonymousPrepaidIndicator;
-    private String programName;
-    private String vertical;
-    private String fundingSource;
-    private String consumerType;
-    private String cardholderCurrencyIndicator;
-    private String billingCurrencyDefault;
-    private String comboCardIndicator;
-    private String flexCardIndicator;
-    private boolean smartDataEnabled;
-    private String affiliate;
-    private String credentialStatus;
-    private String paymentAccountType;
-
-    @Data
-    public static class Country {
-        private String code;
-        private String alpha3;
-        private String name;
-    }
-
-    public BinDetails() {
+@Builder
+public record BinDetails(
+        String lowAccountRange,
+        String highAccountRange,
+        String binNum,
+        int binLength,
+        String acceptanceBrand,
+        String ica,
+        String customerName,
+        Country country,
+        boolean localUse,
+        boolean authorizationOnly,
+        String productCode,
+        String productDescription,
+        boolean governmentRange,
+        boolean nonReloadableIndicator,
+        String anonymousPrepaidIndicator,
+        String programName,
+        String vertical,
+        String fundingSource,
+        String consumerType,
+        String cardholderCurrencyIndicator,
+        String billingCurrencyDefault,
+        String comboCardIndicator,
+        String flexCardIndicator,
+        boolean smartDataEnabled,
+        String affiliate,
+        String credentialStatus,
+        String paymentAccountType
+) {
+    public record Country(String code, String alpha3, String name) {
     }
 }

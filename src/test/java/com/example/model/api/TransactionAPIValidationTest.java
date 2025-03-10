@@ -1,13 +1,13 @@
 package com.example.model.api;
 
-import java.util.Set;
-
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,11 +23,12 @@ public class TransactionAPIValidationTest {
 
     @Test
     void testValidTransaction() {
-        TransactionAPI transactionAPI = new TransactionAPI();
-        transactionAPI.setBinNumber("12345678");
-        transactionAPI.setAmount(100L);
-        transactionAPI.setCurrency("USD");
-        transactionAPI.setUserLocation("USA");
+        TransactionAPI transactionAPI = TransactionAPI.builder()
+                .binNumber("12345678")
+                .amount(100L)
+                .currency("USD")
+                .userLocation("USA")
+                .build();
 
         Set<ConstraintViolation<TransactionAPI>> violations = validator.validate(transactionAPI);
         assertTrue(violations.isEmpty(), "Expected no validation errors for a valid transaction");
@@ -35,11 +36,12 @@ public class TransactionAPIValidationTest {
 
     @Test
     void testInvalidBinNumber() {
-        TransactionAPI transactionAPI = new TransactionAPI();
-        transactionAPI.setBinNumber("12345");
-        transactionAPI.setAmount(100L);
-        transactionAPI.setCurrency("USD");
-        transactionAPI.setUserLocation("USA");
+        TransactionAPI transactionAPI = TransactionAPI.builder()
+                .binNumber("12345")
+                .amount(100L)
+                .currency("USD")
+                .userLocation("USA")
+                .build();
 
         Set<ConstraintViolation<TransactionAPI>> violations = validator.validate(transactionAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for invalid bin number");
@@ -48,11 +50,12 @@ public class TransactionAPIValidationTest {
 
     @Test
     void testNegativeAmount() {
-        TransactionAPI transactionAPI = new TransactionAPI();
-        transactionAPI.setBinNumber("12345678");
-        transactionAPI.setAmount(-50L);
-        transactionAPI.setCurrency("USD");
-        transactionAPI.setUserLocation("USA");
+        TransactionAPI transactionAPI = TransactionAPI.builder()
+                .binNumber("12345678")
+                .amount(-50L)
+                .currency("USD")
+                .userLocation("USA")
+                .build();
 
         Set<ConstraintViolation<TransactionAPI>> violations = validator.validate(transactionAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for negative amount");
@@ -61,11 +64,12 @@ public class TransactionAPIValidationTest {
 
     @Test
     void testInvalidCurrency() {
-        TransactionAPI transactionAPI = new TransactionAPI();
-        transactionAPI.setBinNumber("12345678");
-        transactionAPI.setAmount(100L);
-        transactionAPI.setCurrency("US");
-        transactionAPI.setUserLocation("USA");
+        TransactionAPI transactionAPI = TransactionAPI.builder()
+                .binNumber("12345678")
+                .amount(100L)
+                .currency("US")
+                .userLocation("USA")
+                .build();
 
         Set<ConstraintViolation<TransactionAPI>> violations = validator.validate(transactionAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for invalid currency");
@@ -74,11 +78,12 @@ public class TransactionAPIValidationTest {
 
     @Test
     void testInvalidUserLocation() {
-        TransactionAPI transactionAPI = new TransactionAPI();
-        transactionAPI.setBinNumber("12345678");
-        transactionAPI.setAmount(100L);
-        transactionAPI.setCurrency("USD");
-        transactionAPI.setUserLocation("");
+        TransactionAPI transactionAPI = TransactionAPI.builder()
+                .binNumber("12345678")
+                .amount(100L)
+                .currency("USD")
+                .userLocation("")
+                .build();
 
         Set<ConstraintViolation<TransactionAPI>> violations = validator.validate(transactionAPI);
         assertFalse(violations.isEmpty(), "Expected validation error for blank user location");

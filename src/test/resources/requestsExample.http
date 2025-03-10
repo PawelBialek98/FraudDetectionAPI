@@ -10,8 +10,8 @@ Content-Type: application/json
 Authorization: Bearer <<Your token here>>
 
 {
-    "binNumber": 99875393,
-    "amount": 10000000,
-    "currency": "USD",
-    "userLocation": "POL"
+  "binNumber": 99875393,
+  "amount": 10000000,
+  "currency": "USD",
+  "userLocation": "POL"
 }

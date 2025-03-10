@@ -8,18 +8,11 @@ import java.util.Currency;
 public class CurrencyValidator implements ConstraintValidator<ValidCurrency, String> {
 
     @Override
-    public void initialize(ValidCurrency constraintAnnotation) {
-    }
-
-    @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) {
-            return false;
-        }
         try {
             Currency.getInstance(value);
             return true;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             return false;
         }
     }

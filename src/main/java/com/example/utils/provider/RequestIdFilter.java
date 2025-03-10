@@ -1,6 +1,7 @@
 package com.example.utils.provider;
 
 import io.quarkus.logging.Log;
+import io.quarkus.runtime.util.StringUtil;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
@@ -16,19 +17,18 @@ public class RequestIdFilter implements ContainerRequestFilter {
     /**
      * Filter to fill incoming requests with X-REQUESTID if not provided
      *
-     * @param requestContext
+     * @param requestContext Incoming request context
      */
     @Override
     public void filter(ContainerRequestContext requestContext) {
         String requestId = requestContext.getHeaderString(REQUEST_ID_HEADER);
 
-        if (requestId == null || requestId.isBlank()) {
+        if (StringUtil.isNullOrEmpty(requestId)) {
             requestId = UUID.randomUUID().toString();
         }
 
         MDC.put(REQUEST_ID_HEADER, requestId);
 
-        requestContext.setProperty(REQUEST_ID_HEADER, requestId);
         Log.info("Incoming request: " + requestContext.getMethod() + " " + requestContext.getUriInfo().getRequestUri());
     }
 }

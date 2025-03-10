@@ -1,8 +1,8 @@
 package com.example.service.risk.implementation;
 
+import com.example.model.api.TransactionAPI;
 import com.example.model.mastercardApi.BinDetails;
 import com.example.model.risk.RiskAssessment;
-import com.example.model.api.TransactionAPI;
 import com.example.service.risk.RiskRule;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -24,10 +24,11 @@ public class HighRiskCountryRisk implements RiskRule {
 
     @Override
     public RiskAssessment evaluate(TransactionAPI transaction, BinDetails binDetails) {
-        if (HIGH_RISK_COUNTRIES.contains(transaction.getUserLocation())) {
-            return new RiskAssessment(40, "Transaction from a high-risk country: " + transaction.getUserLocation());
-        } else if (MODERATE_RISK_COUNTRIES.contains(transaction.getUserLocation())) {
-            return new RiskAssessment(20, "Transaction from a moderate risk country: "+ transaction.getUserLocation());
+        String userLocation = transaction.userLocation();
+        if (HIGH_RISK_COUNTRIES.contains(userLocation)) {
+            return new RiskAssessment(40, "Transaction from a high-risk country: " + userLocation);
+        } else if (MODERATE_RISK_COUNTRIES.contains(userLocation)) {
+            return new RiskAssessment(20, "Transaction from a moderate risk country: " + userLocation);
         }
         return new RiskAssessment(0, "Country is safe");
     }

@@ -2,10 +2,10 @@ package com.example.service;
 
 import com.example.client.MastercardBinClient;
 import com.example.exception.SigningKeyException;
+import com.example.logging.Logged;
 import com.example.model.mastercardApi.BinDetails;
 import com.mastercard.developer.oauth.OAuth;
 import com.mastercard.developer.utils.AuthenticationUtils;
-import io.quarkus.cache.CacheResult;
 import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -27,6 +27,7 @@ import java.util.List;
 
 import static com.example.utils.Constants.REQUEST_ID_HEADER;
 
+@Logged
 @ApplicationScoped
 public class MastercardBinService {
 
@@ -46,7 +47,11 @@ public class MastercardBinService {
     @ConfigProperty(name = "mastercard.api.signingKey.password")
     String signingKeyPassword;
 
-    @CacheResult(cacheName = "bin-cache")
+    @ConfigProperty(name = "quarkus.rest-client.mastercard-bin-client.url")
+    String mastercardBinClientUrl;
+
+    private PrivateKey signingKey;
+
     public BinDetails getBinDetails(String binId) {
 
         String payload = "{\"accountRange\":\"" + binId + "\"}";
@@ -57,10 +62,20 @@ public class MastercardBinService {
         return binDetails.stream().findFirst().orElseThrow(NotFoundException::new);
     }
 
-    public String prepareAuthHeader(String payload){
-        PrivateKey signingKey;
+    public String prepareAuthHeader(String payload) {
+        if (signingKey == null) {
+            loadSigningKey();
+        }
+
+        URI uri = URI.create(mastercardBinClientUrl + "/bin-ranges/account-searches");
+        String method = "POST";
+        Charset charset = StandardCharsets.UTF_8;
+        return OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
+    }
+
+    private void loadSigningKey() {
         try {
-            signingKey = AuthenticationUtils.loadSigningKey(pkcs12KeyFilePath,
+            this.signingKey = AuthenticationUtils.loadSigningKey(pkcs12KeyFilePath,
                     signingKeyAlias,
                     signingKeyPassword);
         } catch (IOException | KeyStoreException | CertificateException | NoSuchAlgorithmException |
@@ -68,10 +83,5 @@ public class MastercardBinService {
             Log.error(e);
             throw new SigningKeyException("Problem while signing key" + e);
         }
-
-        URI uri = URI.create("https://sandbox.api.mastercard.com/bin-resources/bin-ranges/account-searches");
-        String method = "POST";
-        Charset charset = StandardCharsets.UTF_8;
-        return OAuth.getAuthorizationHeader(uri, method, payload, charset, consumerKey, signingKey);
     }
 }

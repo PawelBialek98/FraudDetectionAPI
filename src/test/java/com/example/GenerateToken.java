@@ -1,11 +1,9 @@
 package com.example;
 
+import io.smallrye.jwt.build.Jwt;
+
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashSet;
-
-import io.smallrye.jwt.build.Jwt;
 
 public class GenerateToken {
 

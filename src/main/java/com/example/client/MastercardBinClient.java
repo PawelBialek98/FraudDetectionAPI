@@ -7,7 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.rest.client.reactive.ClientExceptionMapper;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.jboss.resteasy.reactive.RestHeader;
@@ -15,7 +16,7 @@ import org.jboss.resteasy.reactive.RestHeader;
 import java.util.List;
 
 /**
- *  Represents Client API for Mastercard Bin Lookup
+ * Represents Client API for Mastercard Bin Lookup
  */
 @RegisterRestClient(configKey = "mastercard-bin-client")
 public interface MastercardBinClient {
@@ -23,8 +24,8 @@ public interface MastercardBinClient {
     /**
      * Call Mastercard Bin Lookup /bin-ranges/account-searches endpoint to receive Bin related data
      *
-     * @param authHeader - OAuth1.0a authorization header
-     * @param requestId - X-REQUESTID for traceability
+     * @param authHeader   - OAuth1.0a authorization header
+     * @param requestId    - X-REQUESTID for traceability
      * @param accountRange - Bin number to received data for
      * @return List of BinDetails with one BinDetail object
      * @throws MastercardBinLookupException - if Mastercard Api returns error 400 or above
@@ -47,10 +48,10 @@ public interface MastercardBinClient {
     static RuntimeException toException(Response response) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         MastercardException errorResponse = mapper.readValue(response.readEntity(String.class), MastercardException.class);
-        MastercardException.MastercardExceptionValues errorDetials = errorResponse.errors.error.getFirst();
-        return new MastercardBinLookupException(errorDetials.reasonCode + " - "
-                + errorDetials.description + " - "
-                + errorDetials.details,
+        MastercardException.MastercardExceptionValues errorDetials = errorResponse.errors().error().getFirst();
+        return new MastercardBinLookupException(errorDetials.reasonCode() + " - "
+                + errorDetials.description() + " - "
+                + errorDetials.details(),
                 response.getStatus());
     }
 }

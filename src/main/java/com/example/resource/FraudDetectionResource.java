@@ -2,6 +2,7 @@ package com.example.resource;
 
 import com.example.exception.MastercardBinLookupException;
 import com.example.exception.SigningKeyException;
+import com.example.logging.Logged;
 import com.example.model.api.SimpleBinAPI;
 import com.example.model.api.TransactionAPI;
 import com.example.service.MastercardBinService;
@@ -11,11 +12,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -25,6 +22,7 @@ import java.util.function.Supplier;
 
 
 @Path("")
+@Logged
 @RequestScoped
 public class FraudDetectionResource {
 
@@ -39,7 +37,7 @@ public class FraudDetectionResource {
 
     @POST
     @Path("/evaluateTransaction")
-    @RolesAllowed({ "User", "Admin" })
+    @RolesAllowed({"User", "Admin"})
     @Operation(summary = "Evaluate Transaction", description = "Evaluate transaction and returns it score with description")
     public Response evaluateTransaction(@Valid TransactionAPI input) {
         return handleExceptions(() -> riskAssessmentService.assessRisk(input));
@@ -51,7 +49,7 @@ public class FraudDetectionResource {
     @RolesAllowed({"User"})
     @Operation(summary = "Bin Details", description = "Receive Bin number details from mastercard API")
     public Response getBinDetails(@Valid @BeanParam SimpleBinAPI request) {
-        return handleExceptions(() -> mastercardBinService.getBinDetails(request.getBinNumber()));
+        return handleExceptions(() -> mastercardBinService.getBinDetails(request.binNumber()));
     }
 
     private <T> Response handleExceptions(Supplier<T> action) {

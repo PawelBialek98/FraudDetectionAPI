@@ -6,28 +6,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MastercardException {
-
-    @JsonProperty("Errors")
-    public MastercardExceptionInner errors;
-
+public record MastercardException(
+        @JsonProperty("Errors") MastercardExceptionInner errors
+) {
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class MastercardExceptionInner{
-        @JsonProperty("Error")
-        public List<MastercardExceptionValues> error;
+    public record MastercardExceptionInner(
+            @JsonProperty("Error") List<MastercardExceptionValues> error
+    ) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class MastercardExceptionValues {
-        @JsonProperty("Source")
-        public String source;
-        @JsonProperty("ReasonCode")
-        public String reasonCode;
-        @JsonProperty("Description")
-        public String description;
-        @JsonProperty("Recoverable")
-        public boolean recoverable;
-        @JsonProperty("Details")
-        public String details;
+    public record MastercardExceptionValues(
+            @JsonProperty("Source") String source,
+            @JsonProperty("ReasonCode") String reasonCode,
+            @JsonProperty("Description") String description,
+            @JsonProperty("Recoverable") boolean recoverable,
+            @JsonProperty("Details") String details
+    ) {
     }
 }

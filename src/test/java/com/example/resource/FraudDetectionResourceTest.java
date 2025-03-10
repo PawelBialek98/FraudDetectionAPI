@@ -4,7 +4,6 @@ import com.example.GenerateToken;
 import com.example.exception.MastercardBinLookupException;
 import com.example.model.mastercardApi.BinDetails;
 import com.example.service.MastercardBinService;
-import com.example.service.RiskAssessmentService;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.Header;
@@ -14,14 +13,13 @@ import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-
-import java.util.UUID;
-
-import static io.restassured.RestAssured.given;
 
 @QuarkusTest
 public class FraudDetectionResourceTest {
@@ -30,9 +28,6 @@ public class FraudDetectionResourceTest {
 
     @InjectMock
     MastercardBinService mastercardBinService;
-
-    @InjectMock
-    RiskAssessmentService riskAssessmentService;
 
     private static final String REQUEST_ID = UUID.randomUUID().toString();
 
@@ -47,10 +42,11 @@ public class FraudDetectionResourceTest {
     void testGetBinDetails_Success() {
         String binNum = "12345678";
 
-        BinDetails mockBinDetails = new BinDetails(); //"123456", "Mastercard", "Bank XYZ"
-        mockBinDetails.setBinNum("12345678");
-        mockBinDetails.setGovernmentRange(true);
-        mockBinDetails.setCustomerName("VILLAGE BANK");
+        BinDetails mockBinDetails = BinDetails.builder()
+                .binNum(binNum)
+                .governmentRange(true)
+                .customerName("VILLAGE BANK")
+                .build();
 
         when(mastercardBinService.getBinDetails(anyString()))
                 .thenReturn(mockBinDetails);

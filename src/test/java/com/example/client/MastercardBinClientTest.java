@@ -33,8 +33,8 @@ public class MastercardBinClientTest {
         List<BinDetails> response = mastercardBinClient.getBinDetails(mastercardBinService.prepareAuthHeader(accountRange), requestId, accountRange);
         assertNotNull(response);
         assertNotNull(response.getFirst());
-        assertEquals(binId.substring(0,response.getFirst().getBinLength()), response.getFirst().getBinNum());
-        assertEquals("VILLAGE BANK", response.getFirst().getCustomerName());
+        assertEquals(binId.substring(0, response.getFirst().binLength()), response.getFirst().binNum());
+        assertEquals("VILLAGE BANK", response.getFirst().customerName());
     }
 
     @Test

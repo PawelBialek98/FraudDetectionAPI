@@ -1,58 +1,34 @@
 package com.example.logging;
 
+import io.quarkus.logging.Log;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import org.jboss.logging.Logger;
-import java.lang.reflect.Field;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Interceptor
 @Logged
 public class LoggingInterceptor {
-    private static final Logger LOG = Logger.getLogger(LoggingInterceptor.class);
 
     @AroundInvoke
     public Object logMethodCall(InvocationContext context) throws Exception {
         String methodName = context.getMethod().getName();
-        Object[] parameters = context.getParameters();
-        String maskedParams = maskSensitiveData(parameters);
+        String className = context.getTarget().getClass().getSimpleName();
+        String params = Arrays.stream(context.getParameters())
+                .map(param -> param != null ? param.toString() : "null")
+                .collect(Collectors.joining(", "));
 
-        LOG.infof("Calling: %s -> %s", methodName, maskedParams);
-
-        Object result = context.proceed();
-
-        String maskedResult = maskSensitiveData(result);
-        LOG.infof("Ended: %s -> %s", methodName, maskedResult);
-
-        return result;
-    }
-
-    private String maskSensitiveData(Object obj) {
-        switch (obj) {
-            case null -> {
-                return "null";
-            }
-            case String str -> {
-                return str.replaceAll("\\d(?=\\d{4})", "*");
-            }
-            case Number number -> {
-                return "***";
-            }
-            default -> {
-            }
-        }
+        Log.infof("Calling: %s.%s(%s)", className, methodName, params);
 
         try {
-            Field[] fields = obj.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(MaskedLog.class)) {
-                    field.setAccessible(true);
-                    field.set(obj, maskSensitiveData(field.get(obj)));
-                }
-            }
+            Object result = context.proceed();
+            Log.infof("Method %s.%s returned successfully", className, methodName);
+            return result;
         } catch (Exception e) {
-            LOG.warn("Błąd maskowania danych", e);
+            Log.errorf("Method %s.%s failed: %s", className, methodName, e.getMessage());
+            throw e;
         }
-        return obj.toString();
     }
 }

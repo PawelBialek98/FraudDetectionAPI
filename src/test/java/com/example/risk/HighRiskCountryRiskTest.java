@@ -5,7 +5,6 @@ import com.example.model.mastercardApi.BinDetails;
 import com.example.model.risk.RiskAssessment;
 import com.example.service.risk.implementation.HighRiskCountryRisk;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,10 +13,10 @@ public class HighRiskCountryRiskTest {
 
     @Test
     void testHighRiskCountryTransaction() {
-        TransactionAPI transaction = Mockito.mock(TransactionAPI.class);
-        BinDetails binDetails = Mockito.mock(BinDetails.class);
-
-        Mockito.when(transaction.getUserLocation()).thenReturn("AFG");
+        TransactionAPI transaction = TransactionAPI.builder()
+                .userLocation("AFG")
+                .build();
+        BinDetails binDetails = BinDetails.builder().build();
 
         RiskAssessment result = highRiskCountry.evaluate(transaction, binDetails);
 
@@ -27,10 +26,10 @@ public class HighRiskCountryRiskTest {
 
     @Test
     void testModerateRiskCountryTransaction() {
-        TransactionAPI transaction = Mockito.mock(TransactionAPI.class);
-        BinDetails binDetails = Mockito.mock(BinDetails.class);
-
-        Mockito.when(transaction.getUserLocation()).thenReturn("BOL");
+        TransactionAPI transaction = TransactionAPI.builder()
+                .userLocation("BOL")
+                .build();
+        BinDetails binDetails = BinDetails.builder().build();
 
         RiskAssessment result = highRiskCountry.evaluate(transaction, binDetails);
 
