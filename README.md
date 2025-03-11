@@ -1,6 +1,22 @@
 # FraudDetectionAPI - test project
 
+## Description
+
+The application provides two endpoints:
+1) /evaluateTransaction - to assess the risk of a potential transaction. Returns a score of 0-100 along with a description of potential vulnerabilities
+2) /getBinDetails - retrieves RAW data for a given Bin number from the Mastercard API.
+
+
 At the moment applicaiton works only with *dev mode* (MongoDB works in Dev Services mode)
+
+## Key features
+
+ - Application is secured behind JWT
+ - Integration with Mastercard API
+ - Calculated transaction evaluations are saved to MongoDB
+ - Custom logging interceptor to track method calls
+ - Custom input parameters validation (e.g. Checking compatibility with ISO 4217)
+ - Tracking each endpoint call with X-REQUESTID modification
 
 ## Requirements
 
