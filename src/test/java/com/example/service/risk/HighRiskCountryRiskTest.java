@@ -1,4 +1,4 @@
-package com.example.risk;
+package com.example.service.risk;
 
 import com.example.model.api.TransactionAPI;
 import com.example.model.mastercardApi.BinDetails;
