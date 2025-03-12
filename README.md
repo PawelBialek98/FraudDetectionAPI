@@ -7,7 +7,7 @@ The application provides two endpoints:
 2) /getBinDetails - retrieves RAW data for a given Bin number from the Mastercard API.
 
 
-At the moment applicaiton works only with *dev mode* (MongoDB works in Dev Services mode)
+At the moment applicaiton works only with *dev mode* (MongoDB and Redis works in Dev Services mode)
 
 ## Key features
 
