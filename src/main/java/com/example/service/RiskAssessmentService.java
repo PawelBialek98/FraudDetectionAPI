@@ -7,9 +7,12 @@ import com.example.model.mastercardApi.BinDetails;
 import com.example.model.risk.RiskResult;
 import com.example.repository.TransactionRepository;
 import com.example.service.risk.RiskEvaluator;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.slf4j.MDC;
+
+import java.util.List;
 
 import static com.example.utils.Constants.REQUEST_ID_HEADER;
 
@@ -35,7 +38,18 @@ public class RiskAssessmentService {
     public RiskResult assessRisk(TransactionAPI transaction) {
         BinDetails binDetails = mastercardBinService.getBinDetails(transaction.binNumber());
 
-        RiskResult riskResult = riskEvaluator.evaluateRisk(transaction, binDetails);
+        RiskResult riskResult = null;
+        try{
+            riskResult = riskEvaluator.evaluateRisk(transaction, binDetails);
+        } catch (InterruptedException e){
+            Thread.currentThread().interrupt();
+            Log.error("Failed to evaluate risk assessment", e);
+        } finally {
+            if(riskResult == null){
+                riskResult = new RiskResult(100, List.of("Cannot evaulate risk due to thread interrupted exception"));
+            }
+        }
+
         saveRiskAssessment(transaction, riskResult);
         return riskResult;
     }

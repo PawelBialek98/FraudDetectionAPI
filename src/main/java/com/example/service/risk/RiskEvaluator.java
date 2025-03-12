@@ -9,6 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.concurrent.StructuredTaskScope;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -17,14 +18,26 @@ public class RiskEvaluator {
     @All
     List<RiskRule> riskRules;
 
-    public RiskResult evaluateRisk(TransactionAPI transaction, BinDetails binDetails) {
-        return riskRules.stream()
-                .map(rule -> rule.evaluate(transaction, binDetails))
-                .filter(assessment -> assessment.riskScore() > 0)
-                .collect(Collectors.teeing(
-                        Collectors.summingInt(RiskAssessment::riskScore),
-                        Collectors.mapping(RiskAssessment::assessment, Collectors.toList()),
-                        (totalScore, reasons) -> new RiskResult(Math.min(totalScore, 100), reasons)
-                ));
+    public RiskResult evaluateRisk(TransactionAPI transaction, BinDetails binDetails) throws InterruptedException {
+
+        try(var scope = new StructuredTaskScope<RiskAssessment>()){
+
+            var riskAssessmentsTask =
+                    riskRules.stream()
+                        .map(riskRule -> scope.fork(() -> riskRule.evaluate(transaction,binDetails)))
+                        .toList();
+
+            scope.join();
+
+            return riskAssessmentsTask.stream()
+                            .filter(t -> t.state() == StructuredTaskScope.Subtask.State.SUCCESS)
+                            .map(StructuredTaskScope.Subtask::get)
+                            .filter(assessment -> assessment.riskScore() > 0)
+                            .collect(Collectors.teeing(
+                                    Collectors.summingInt(RiskAssessment::riskScore),
+                                    Collectors.mapping(RiskAssessment::assessment, Collectors.toList()),
+                                    (totalScore, reasons) -> new RiskResult(Math.min(totalScore, 100), reasons)
+                            ));
+        }
     }
 }
